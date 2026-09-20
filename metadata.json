@@ -1,0 +1,8 @@
+{
+  "name": "Remix CBT Anti-Curang \u0026 Sistem Ujian Online",
+  "description": "Aplikasi CBT Ujian Online dengan proteksi anti-curang, deteksi layar, kunci ujian, portal siswa \u0026 admin, bank soal gambar \u0026 excel, serta rekap nilai real-time.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

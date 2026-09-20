@@ -1,0 +1,178 @@
+{
+  "entities": {
+    "AdminUser": {
+      "title": "AdminUser",
+      "description": "Akun administrator, pengawas, dan guru mapel",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "username": { "type": "string" },
+        "password": { "type": "string" },
+        "name": { "type": "string" },
+        "role": { "type": "string", "enum": ["SUPER_ADMIN", "PENGAWAS", "GURU_MAPEL"] },
+        "subject": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "username", "name", "role", "createdAt"]
+    },
+    "ExamSession": {
+      "title": "ExamSession",
+      "description": "Sesi jadwal ujian CBT online",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "subject": { "type": "string" },
+        "gradeLevels": { "type": "array" },
+        "startDate": { "type": "string" },
+        "startTime": { "type": "string" },
+        "endTime": { "type": "string" },
+        "durationMinutes": { "type": "number" },
+        "token": { "type": "string" },
+        "totalQuestions": { "type": "number" },
+        "totalPoints": { "type": "number" },
+        "kkm": { "type": "number" },
+        "maxViolations": { "type": "number" },
+        "status": { "type": "string", "enum": ["ACTIVE", "SCHEDULED", "EXPIRED", "ARCHIVED"] }
+      },
+      "required": ["id", "title", "subject", "durationMinutes", "token", "status"]
+    },
+    "Question": {
+      "title": "Question",
+      "description": "Butir soal ujian pilihan ganda atau esai",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "examId": { "type": "string" },
+        "number": { "type": "number" },
+        "type": { "type": "string", "enum": ["MULTIPLE_CHOICE", "ESSAY"] },
+        "text": { "type": "string" },
+        "options": { "type": "array" },
+        "correctAnswer": { "type": "string" },
+        "points": { "type": "number" }
+      },
+      "required": ["id", "examId", "number", "type", "text", "points"]
+    },
+    "ExamSubmission": {
+      "title": "ExamSubmission",
+      "description": "Hasil dan rekap nilai pengerjaan ujian siswa",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "examId": { "type": "string" },
+        "examTitle": { "type": "string" },
+        "studentNisn": { "type": "string" },
+        "studentName": { "type": "string" },
+        "studentClass": { "type": "string" },
+        "answers": { "type": "object" },
+        "score": { "type": "number" },
+        "status": { "type": "string", "enum": ["PASSED", "FAILED"] },
+        "totalCorrect": { "type": "number" },
+        "totalIncorrect": { "type": "number" },
+        "violationCount": { "type": "number" },
+        "submittedAt": { "type": "string" }
+      },
+      "required": ["id", "examId", "studentNisn", "studentName", "score", "submittedAt"]
+    },
+    "ActiveStudentExamState": {
+      "title": "ActiveStudentExamState",
+      "description": "Status pengerjaan real-time siswa saat ujian berlangsung",
+      "type": "object",
+      "properties": {
+        "nisn": { "type": "string" },
+        "name": { "type": "string" },
+        "className": { "type": "string" },
+        "examId": { "type": "string" },
+        "examTitle": { "type": "string" },
+        "startTime": { "type": "number" },
+        "lastActive": { "type": "number" },
+        "currentQuestionIndex": { "type": "number" },
+        "answeredCount": { "type": "number" },
+        "totalQuestions": { "type": "number" },
+        "remainingSeconds": { "type": "number" },
+        "status": { "type": "string", "enum": ["IN_PROGRESS", "SUBMITTED", "BLOCKED"] }
+      },
+      "required": ["nisn", "examId", "status", "lastActive"]
+    },
+    "ActivityLog": {
+      "title": "ActivityLog",
+      "description": "Catatan log aktivitas dan pelanggaran anti-curang",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "timestamp": { "type": "string" },
+        "actor": { "type": "string" },
+        "role": { "type": "string" },
+        "action": { "type": "string" },
+        "target": { "type": "string" },
+        "details": { "type": "string" },
+        "level": { "type": "string", "enum": ["info", "warning", "danger"] }
+      },
+      "required": ["id", "timestamp", "actor", "action", "details", "level"]
+    },
+    "ActiveMonitorProctor": {
+      "title": "ActiveMonitorProctor",
+      "description": "Sesi aktif pengawas ujian",
+      "type": "object",
+      "properties": {
+        "adminId": { "type": "string" },
+        "username": { "type": "string" },
+        "name": { "type": "string" },
+        "role": { "type": "string" },
+        "startedAt": { "type": "string" },
+        "lastHeartbeat": { "type": "number" }
+      },
+      "required": ["adminId", "name", "role", "lastHeartbeat"]
+    },
+    "RegisteredStudent": {
+      "title": "RegisteredStudent",
+      "description": "Database data siswa terdaftar ujian CBT",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "nis": { "type": "string" },
+        "name": { "type": "string" },
+        "studentClass": { "type": "string" },
+        "gender": { "type": "string", "enum": ["L", "P"] },
+        "nisn": { "type": "string" },
+        "altNis": { "type": "array" },
+        "schoolOrigin": { "type": "string" }
+      },
+      "required": ["id", "nis", "name", "studentClass", "gender"]
+    }
+  },
+  "firestore": {
+    "/cbt_students/{studentId}": {
+      "schema": { "$ref": "RegisteredStudent" },
+      "description": "Database induk siswa terdaftar untuk login otomatis berbasis NIS"
+    },
+    "/cbt_admins/{adminId}": {
+      "schema": { "$ref": "AdminUser" },
+      "description": "Daftar akun admin, koordinator CBT, pengawas, dan guru"
+    },
+    "/cbt_exams/{examId}": {
+      "schema": { "$ref": "ExamSession" },
+      "description": "Daftar sesi ujian yang dibuat guru/admin"
+    },
+    "/cbt_questions/{questionId}": {
+      "schema": { "$ref": "Question" },
+      "description": "Koleksi butir soal ujian"
+    },
+    "/cbt_submissions/{submissionId}": {
+      "schema": { "$ref": "ExamSubmission" },
+      "description": "Hasil dan nilai ujian yang dikumpulkan siswa"
+    },
+    "/cbt_active_exams/{activeId}": {
+      "schema": { "$ref": "ActiveStudentExamState" },
+      "description": "Status ujian siswa yang sedang berlangsung secara real-time"
+    },
+    "/cbt_activity_logs/{logId}": {
+      "schema": { "$ref": "ActivityLog" },
+      "description": "Log aktivitas dan deteksi pelanggaran kecurangan"
+    },
+    "/cbt_active_proctors/{proctorId}": {
+      "schema": { "$ref": "ActiveMonitorProctor" },
+      "description": "Pengawas yang sedang aktif memantau ujian"
+    }
+  }
+}

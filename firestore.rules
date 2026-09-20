@@ -1,0 +1,36 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // School CBT Online - allow authenticated/public reads & writes for exam execution and proctoring
+    match /cbt_admins/{adminId} {
+      allow read, write: if true;
+    }
+    match /cbt_exams/{examId} {
+      allow read, write: if true;
+    }
+    match /cbt_questions/{questionId} {
+      allow read, write: if true;
+    }
+    match /cbt_submissions/{submissionId} {
+      allow read, write: if true;
+    }
+    match /cbt_active_exams/{activeId} {
+      allow read, write: if true;
+    }
+    match /cbt_activity_logs/{logId} {
+      allow read, write: if true;
+    }
+    match /cbt_active_proctors/{proctorId} {
+      allow read, write: if true;
+    }
+    match /cbt_admin_sessions/{sessionId} {
+      allow read, write: if true;
+    }
+    match /cbt_students/{studentId} {
+      allow read, write: if true;
+    }
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}
